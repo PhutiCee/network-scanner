@@ -25,6 +25,8 @@ WELL_KNOWN_PORTS: dict[int, str] = {
     53:    "dns",
     80:    "http",
     110:   "pop3",
+    135:   "msrpc",
+    139:   "netbios",
     143:   "imap",
     443:   "https",
     445:   "smb",
