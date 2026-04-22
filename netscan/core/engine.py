@@ -150,10 +150,6 @@ class ScanEngine:
         return port_result
 
     def _build_scanner(self) -> BaseScanner:
-        """
-        Factory method — returns the correct scanner for the configured
-        scan type. Adding a new scan type means adding one case here.
-        """
         config = self.config
 
         if config.scan_type == ScanType.TCP_CONNECT:
@@ -162,7 +158,19 @@ class ScanEngine:
                 grab_banner = config.grab_banner,
             )
 
+        if config.scan_type == ScanType.SYN:
+            try:
+                from netscan.scanner.syn_scan import SYNScanner
+                return SYNScanner(timeout=config.timeout)
+            except (ImportError, EnvironmentError) as e:
+                logger.warning(
+                    "SYN scan unavailable: %s — falling back to TCP connect", e
+                )
+                return TCPConnectScanner(
+                    timeout     = config.timeout,
+                    grab_banner = config.grab_banner,
+                )
+
         raise NotImplementedError(
-            f"Scanner for '{config.scan_type.value}' not yet implemented. "
-            f"Use scan_type=ScanType.TCP_CONNECT for now."
+            f"No scanner implemented for '{config.scan_type.value}'"
         )

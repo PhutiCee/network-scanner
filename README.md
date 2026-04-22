@@ -27,3 +27,22 @@ Run the test suite:
 ```bash
 pytest tests/ -v
 ```
+
+## The theory — what SYN scan actually does at the packet level
+
+```bash
+You                         Target
+ |                             |
+ |──── IP/TCP [SYN] ─────────>|   Raw packet, no OS involvement
+ |                             |
+ |<─── IP/TCP [SYN+ACK] ──────|   Port is OPEN
+ |──── IP/TCP [RST] ─────────>|   You reset - never complete handshake
+ |                             |
+ ── OR ──
+ |                             |
+ |<─── IP/TCP [RST+ACK] ──────|   Port is CLOSED
+ |                             |
+ ── OR ──
+ |                             |
+ |       (no response)         |   Port is FILTERED
+```
